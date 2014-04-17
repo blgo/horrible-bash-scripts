@@ -1,0 +1,72 @@
+#! /bin/bash
+#script to give root power to keybindings to run wvdial , wpa_supplicant, etc
+pipe=/home/blas/scripts/superscr/superflag
+notipipe=/home/blas/scripts/superscr/supernotify
+fla=0
+wpa_supplicant_script &
+while true;
+do
+
+if [ ! -p $pipe ]
+then
+mkfifo $pipe
+chmod 777 $pipe
+fi
+
+
+if [ ! -p $notipipe ]
+then
+mkfifo $notipipe
+chmod 777 $notipipe
+fi
+
+read line < $pipe
+if [ "$line" = "modem" ]
+        then
+	VAR="`ip link | grep -o wwp0`"
+	if [ -z "$VAR" ]
+	then
+	echo "^fg(orange)Modem 3G not ready" > $notipipe	
+	else
+		if [ -z "`ip link | grep ppp0`" ]
+			then
+			exec wvdial &
+			echo "^fg(green)Connecting modem3g" > $notipipe
+			else
+			killall wvdial
+                echo "^fg(red)Disconnecting modem3g" > $notipipe
+		fi
+	fi
+fi
+if [ "$line" = "wifi"  ]
+        then
+	if [ "`ps -e | grep -o wpa_supplicant | sed '1 !d'`" = "wpa_supplicant" ]
+		then
+		if [ ! -z "`wpa_cli status | grep -o DISCONNECTED`" ]
+			then
+			wpa_cli reassociate
+			echo "^fg(green)Connecting wifi" > $notipipe
+			else
+			wpa_cli disconnect
+			echo "^fg(red)Disconnecting wifi" > $notipipe
+		fi
+	else
+	echo "Loading wpa_suppicant" > $notipipe
+	wpa_supplicant_script &
+	fi
+fi
+
+if [ "$line" = "laptop_mode" ] 
+        then
+        echo "^fg(orange)loading laptop_mode" > $notipipe
+	laptop_mode auto force
+	temp0="`sensors | sed -e '/Core/!d' -e 's/+//' | awk '{print$3}'| sed '1 !d'`"
+	temp1="`sensors | sed -e '/Core/!d' -e 's/+//' | awk '{print$3}'| sed '2 !d'`"
+	laptopmode_state="`cat /var/run/laptop-mode-tools/state`"
+        CPU0="`cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq`"
+        CPU1="`cat /sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq`"
+	cpu0="`expr "$CPU0" \/ 1000 `"
+	cpu1="`expr "$CPU1" \/ 1000 `"
+        sleep 2 && echo "^fg(green)laptop_mode: "$laptopmode_state" -- ^fg(blue)"$cpu0"MHz - "$temp0" ^fg(green)// ^fg(lightblue)"$cpu1"MHz "$temp1"" > $notipipe
+fi      
+done

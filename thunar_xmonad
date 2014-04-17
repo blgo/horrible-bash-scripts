@@ -1,0 +1,12 @@
+# !/bin/bash
+#xvkbd send text lines like a virtual keyboard
+#wmctrl works in xmonad when "XMonad.Hooks.EwmhDesktops" is enabled 
+#this script uses keybindings from Xmonad to interact with the X window manager
+if [ -n "$(ps -e | grep thunar)" ]  
+then
+wmctrl -xa "thunar"
+sleep 0.1
+xvkbd -text "\Cn" #Control-t, new tab in current thunar session
+else
+thunar
+fi

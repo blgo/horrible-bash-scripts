@@ -1,0 +1,8 @@
+#! /bin/bash
+#kb counter for modem 3g, session data consumption
+while true;
+do
+ARRAY=` ifconfig ppp0 | sed -e '/([0-9]*.[0-9*]/!d' -e 's/.*(\([0-9]*.[0-9].*\)).*/\1/g'`
+echo "$ARRAY"
+sleep 4 
+done

@@ -1,0 +1,2 @@
+#!/bin/bash
+echo -e  "`amixer | sed -n '5 p' | awk -n '{ printf$4 }' | sed -e 's-\[--' -e 's-\]--' -e 's-%--'`%" "`amixer | sed -n '5 p' | awk -n '{ printf$6 }' |  sed -e 's-\[--' -e 's-\]--'`" 

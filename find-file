@@ -1,0 +1,15 @@
+#!/bin/bash
+#$1=Opcion, file or word; $2=pattern
+
+if [ $1 = "file" ]
+then
+echo "buscando archivos"
+#Search filenames
+find . -name "*$2*" -print
+fi
+	if [ $1 = "word" ]
+	then
+	echo "buscando palabras"
+	#Searh words inside files
+	ack "$2" ./
+	fi

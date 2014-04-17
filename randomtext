@@ -1,0 +1,2 @@
+#! /bin/bash
+less ./Documents/Cosas/Too\ many\ thoughts/$(ls ./Documents/Cosas/Too\ many\ thoughts/ | shuf | sed '1 !d' | sed 's/ /\\ /g')

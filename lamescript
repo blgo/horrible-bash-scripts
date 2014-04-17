@@ -1,0 +1,59 @@
+#!/bin/bash
+if [ ! -d "./compressed" ]
+then
+mkdir ./compressed
+fi
+
+echo "open this script in the music folder"
+echo -e "........................................................................\n"
+echo "current folder: $PWD" 
+echo "$(ls ./*.mp3)" > ./list
+files="$(cat ./list | wc | awk '{print$1}')" 
+ls -l
+echo "There are $files files"
+read  -p "check the files, then press enter..."
+
+i=1
+while [ "$i" -le "$files" ]
+ 	do	
+	file="$(cat ./list | sed ''$i' '\!d'')"
+
+
+	PIC="$(echo $file | sed 's/mp3/jpg/')"
+	#comment
+	lametc="audiotree live"
+	#artist
+	lameta="$(echo "$file" | awk -F "-" '{print$1}' | sed 's/.\///')"
+	#album
+	lametl="audiotree live sessions"
+	#year
+	lamety="2013"
+	#genre
+	lametg="live"
+	#tittle
+	lamett=""$(echo "$file" | awk -F "-" '{print$2}' | sed 's/\ //')""
+
+	if [ ! -d "./compressed/$lameta" ]
+		then
+		mkdir "./compressed/$lameta"
+	fi
+
+
+	echo ""
+	echo "__________________________________________________"
+	echo "file: $file"
+	echo "Image: $PIC"
+	echo "title: $lamett"
+	echo "artist: $lameta"
+	echo ""
+	echo "--------------------------------------------------"
+	echo ""
+	if [ ! -e "./compressed/$lameta/$lamett - $lameta.mp3" ]
+		then	
+		lame  --ignore-tag-errors --tc "$lametc" --tt "$lamett" --tc "$lametc" --ta "$lameta" --tl "$lametl" --ti "$PIC" --ty "$lamety" --tg "$lametg" --preset standard "$file" "./compressed/$lameta/$lamett - $lameta.mp3"
+	fi
+	i=$(( $i + 1 )) 
+done
+rm ./list
+echo "Work finished succesfully"
+exit 0

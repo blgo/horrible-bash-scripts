@@ -1,0 +1,9 @@
+#!/bin/bash
+#script to reaload wvdial and the signal strengh notifier 
+sleep 5
+killall iftop
+killall dhcpcd-bin
+killall wpa_supplicant
+#rfkill block all
+modem3g_signaltemp &
+wvdial &

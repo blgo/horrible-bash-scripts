@@ -1,0 +1,11 @@
+# !/bin/bash
+#xvkbd send text lines like a virtual keyboard
+#this script uses keybindings from Xmonad to interact with the X window manager
+if [ -n "$(ps -e | grep chrom)" ]  
+then
+wmctrl -xa chromium
+sleep 0.1
+xvkbd -text "\Ct" #Control-t, new tab in current chromium session
+else
+chromium
+fi

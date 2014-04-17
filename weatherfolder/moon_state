@@ -1,0 +1,119 @@
+#! /bin/bash
+function rowcolumselect () {
+rowcol="`sed -n ''$1' p' ./$3 | awk '{print$'$2'}'`"
+}
+cd $HOME
+UCITY="$1"
+#downloading
+elinks --dump http://www.eltiempo.es/$UCITY.html?v=detallada | sed -n '/Hoy\ \ \ /,/El\ Tiempo\ gra/p' > ./moonstate
+#cleaning
+sed 	-e 's/Mi.rcoles/Mierc/g' \
+	-e 's/Radiaci.n\ UV//g' \
+	-e 's/lluvia//g'  \
+	-e 's/Nubes//g' \
+	-e 's/truenos//g' \
+	-e 's/probabilidad//g' \
+	-e 's/de //g'  \
+	-e 's/ilum.//g' \
+	-e 's/Prob.//g' \
+	-e 's/Luna\ nueva/0%/' \
+	-e 's/Luna\ llena/100%/' \
+	-e '/\*/d' \
+	-e 's/\ //g' \
+	-e 's/\([a-z]\)\([A-Z]\)/\1\ \2/g' \
+	-e 's/\([a-z]\)\([0-9]\)/\1\ \2/g' \
+	-e 's/\([0-9]\)\(%\)/\1\2\ /g'  < ./moonstate | awk '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12"\t"$13"\t"$14}' | sed -n '/[0-Z]/p' > ./moonstate2
+#
+#Using this we can arrange data however we want
+#Now is necessary to solve a problem: 2 values jumped one row back, now we have to arrange it
+rowcolumselect 3 1 moonstate2
+data31=$rowcol
+rowcolumselect 3 2 moonstate2
+data32=$rowcol
+rowcolumselect 7 1 moonstate2
+data71=$rowcol
+rowcolumselect 7 2 moonstate2
+data72=$rowcol
+i=1	#this read the row
+j=1	#this read the value from old file
+k=1 	#this write the value into the row 
+rowcol=0 
+while [ $i -le 10 ]
+	do
+	case $i in
+	1) row[$k]=" "
+	k=$(( $k + 1 )) 
+	;;
+	2) row[$k]=" "
+	k=$(( $k + 1 )) 
+	;;
+	4) row[$k]="lluvia "
+	k=$(( $k + 1 )) 
+	;;
+	5) row[$k]="nubes "
+	k=$(( $k + 1 )) 
+	;;
+	6) row[$k]="UV "
+	k=$(( $k + 1 )) 
+	;;
+	8) row[$k]="truenos "
+	k=$(( $k + 1 )) 
+	;;
+	9) row[$k]="luna "
+	k=$(( $k + 1 )) 
+	;;
+	esac	
+	while [ $j -le 15 ] && [ $i -ne 3 ] && [ $i -ne 7 ]
+		do
+		if [ $k -eq 2 ] || [ $k -eq 9 ] 
+			then
+			if [ $i -eq 4 ]
+				then
+				if [ $k -eq 2 ]
+					then
+					row[$k]=$data31
+				fi
+				if [ $k -eq 9 ] 
+					then
+					row[$k]=$data32
+				fi	
+			fi
+			#this if" only read if there is any value in the 7x3 position
+#			rowcolumselect 7 3 moonstate2
+#echo $rowcol
+#			data="echo $rowcol | grep -o "%""   
+#			if [ $data -ne "%" ]
+#				then
+				if [ $i -eq 8 ] 
+					then    
+					if [ $k -eq 2 ] 
+						then    
+						row[$k]=$data71
+					fi      
+					if [ $k -eq 9 ] 
+						then    
+						row[$k]=$data72
+					fi
+				fi
+#			fi
+		
+		else
+		rowcolumselect $i $j moonstate2
+		row[$k]=$rowcol
+		j=$(( $j + 1 ))	
+		fi
+		k=$(( $k + 1 )) 
+	done
+		if [ $i -ne 3 ] && [ $i -ne 7 ]
+		then
+			echo "${row[*]}" | sed 's/\ /\t/g' >> ./.weatherforecast
+			row=()
+		fi
+		i=$(( $i + 1 ))	
+		j=1
+		k=1
+done
+#notify-send -i $HOME/Downloads/waning_9.png "`grep -o "luna....."  < ./moonstate4`"
+rm ./moonstate
+rm ./moonstate2
+exit 0

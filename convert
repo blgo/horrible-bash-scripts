@@ -1,0 +1,14 @@
+#! /bin/bash
+#test script
+#convert the size, print date over the image, and convert to xpm
+convert -size 1366x768  xc:transparent \
+        -font Bookman-DemiItalic -pointsize 50 \
+        -draw "text 20,60 '`date "+%H:%M:%S%n%d%h%n%A "`'" -channel RGBA -blur 0x6 \
+        -fill steelblue -stroke white \
+        -draw "text 10,60 '`date "+%H:%M:%S%n%d%h%n%A"`'" -antialias \
+	./pic-name.xpm 
+cp ./.background.xpm ./back.xpm 
+convert -composite ./back.xpm ./pic-name.xpm ./3.xpm
+rm ./back.xpm 
+rm ./pic-name.xpm 
+hsetroot -center ./3.xpm

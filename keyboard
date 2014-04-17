@@ -1,0 +1,17 @@
+#!/bin/bash
+#switch a flash to use the keyboard, maybe silly, but I didnt find a better solution
+if  [ -e $HOME/scripts/flags ]
+	then
+	VAR="`tail -n 1 $HOME/scripts/flags | sed -e '/KEYBOARD:\ /!d' -e's/KEYBOARD: \([0-1]\)/\1/'`" 
+	echo $VAR
+	else
+	echo "KEYBOARD: 0" >> $HOME/scripts/flags
+fi
+if [ $VAR -eq  0 ]
+	then
+	xinput disable 12
+	echo "KEYBOARD: 1" >> $HOME/scripts/flags
+	else 
+	xinput enable 12
+echo "KEYBOARD: 0" >> $HOME/scripts/flags
+fi

@@ -1,0 +1,8 @@
+#! /bin/bash
+pipe=/home/blas/scripts/superscr/superflag
+if [ ! -p $pipe  ]
+then
+mkfifo $pipe
+chmod 777 $pipe
+fi
+exec /home/blas/scripts/superscr/superscript

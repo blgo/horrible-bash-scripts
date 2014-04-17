@@ -1,0 +1,57 @@
+#! /bin/bash
+function func {
+i=0
+while true;
+do
+i=0
+CMD="wmctrl -ia "
+CMDx="wmctrl -ic "
+CROSS="^ib(1) x^p(-13)^co(17)^p(-2)"
+WINDOWS=($(wmctrl -l | awk '{print$4$5$6$7}' | sed 's/\(.............\)/\1/g' | tr "\n" " ")) 
+WINDOWS_ID=($(wmctrl -xl | awk '{print$1}' | tr "\n" " "))
+while [ "$i" -lt "${#WINDOWS[*]}" ]
+do
+	DZENLINE["$i"]="$(echo "^ca(1, $CMD ${WINDOWS_ID["$i"]}) ${WINDOWS["$i"]}^ca() ^ca(1, $CMDx ${WINDOWS_ID["$i"]})$CROSS^ca()")"
+	i=$(($i+1))
+done
+i=0
+if [ "${#DZENLINE[*]}" -eq "0" ]
+then
+DZENLINE[0]="^fg(#33bbbb) ^ca(1, xterm -rv ) Welcome to Xmonad!!! ^ca()"
+fi
+echo "${DZENLINE[*]} "
+DZENLINE=()
+sleep 1;
+done;
+}
+
+function weatherf {
+while true;
+do
+echo "^fg(white)$(head -n1 $HOME/.weatherforecast) ^ca(1, xterm -rv -e "less $HOME/.weatherforecast") $(weather -echo) ^ca() ^fg(red) $(rain | head -n1) "
+sleep 30
+done
+}
+
+function values { 
+while true
+do 
+echo " $(battery_status) $(date +%H:%M:%S) " 
+sleep 1  
+done
+}
+
+
+
+(values | dzen2 -title-name dzenc -y -1 -ta center -bg "#224466" -expand left -e 'entertitle=exec:;leavetitle=exec:' )&
+(weatherf | dzen2 -title-name dzenb -y -1 -ta center -bg "#224466" -expand right  -e 'entertitle=exec:;leavetitle=exec:' )&
+(func | dzen2 -title-name dzena -ta center -bg "#224466" -expand right -e 'entertitle=exec:;leavetitle=exec:' )&
+
+#install "wmctrl" from the official repositories
+#add this to make work "wmctrl" in xmonad
+#import XMonad.Hooks.EwmhDesktops
+#main = xmonad $ ewmh defaults
+#add this to your xmonad.hs file to make space in your screen
+# manageHook = manageDocks <+> [whatever you had before]]
+#myLayout =      avoidStruts $
+#		[whatever you had before]

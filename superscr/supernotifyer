@@ -1,0 +1,7 @@
+#! /bin/bash
+#Read the namedpipe "supernotify", whitch is writen by superscript (with root credentials)
+while true
+do 
+read line < ./scripts/superscr/supernotify
+echo $line | dzen2 -p 2
+done

@@ -1,0 +1,14 @@
+#! /bin/bash
+#very simplistic configuration which will deny all by default, allow any protocol from inside a 192.168.0.1-192.168.0.255 LAN, and allow incoming Deluge and SSH traffic from anywhere:
+ufw enable
+# systemctl enable ufw.service
+#Finally, query the rules being applied via the status command:
+ufw status
+#A very simplistic configuration which will deny all by default, allow any protocol from inside a 192.168.0.1-192.168.0.255 LAN, and allow incoming Deluge and SSH traffic from anywhere:
+ufw default deny
+ufw allow from 192.168.0.0/24
+ufw allow Deluge
+ufw allow SSH
+#status report shows the rules added by the user. For most cases this will be what is needed, but it is good to be aware that builtin-rules do exist. These include filters to allow UPNP, AVAHI and DHCP replies. In order to see all rules setup
+iptables -S |grep ACCEPT
+#While this works just fine for reporting, keep in mind not to enable the iptables service as long as you use ufw for managing it.

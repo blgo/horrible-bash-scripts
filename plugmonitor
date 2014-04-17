@@ -1,0 +1,37 @@
+#!/bin/sh
+dmodeVGA="$(cat /sys/class/drm/card0-VGA-1/status)"
+dmodeHDMI="$(cat /sys/class/drm/card0-HDMI-A-1/status)"
+HDMIresolution="$(cat /sys/class/drm/card0-HDMI-A-1/modes | grep -m1 136)"
+VGAresolution="$(cat /sys/class/drm/card0-VGA-1/modes | head -n 1)"
+export DISPLAY=:0.0
+flag="/home/blas/scripts/monitorflag"
+if [ -e "$flag" ]; then
+state="`tail -n 1 "$flag"`"
+else
+echo "0" > $flag
+fi
+if [ "${dmodeVGA}" = disconnected ] && [ "${dmodeHDMI}" = disconnected ] || [ "$state" -eq 1 ]; then
+	echo	"xdefaults.pcm.card 0" >  /home/blas/.asoundrc 
+	echo	"defaults.pcm.device 0" >> /home/blas/.asoundrc
+ 	#3 will enable HDMI audio output
+	echo	"defaults.ctl.card 0" >>  /home/blas/.asoundrc
+	xrandr --output LVDS1 --mode 1366x768  --auto --output VGA1 --off --output HDMI1  --off
+	echo "0" > $flag
+fi
+if [ "${dmodeVGA}" = connected ] && [ "${dmodeHDMI}" = disconnected ] && [ "$state" -eq 0 ]; then
+	xrandr --output VGA1 --mode "$VGAresolution" --auto --output LVDS1 --off --output HDMI1  --off
+#	xrandr --output VGA1 --below LVDS1
+	echo "1" > $flag
+fi
+if [ "${dmodeVGA}" = disconnected ] && [ "${dmodeHDMI}" = connected ] && [ "$state" -eq 0 ]; then
+	xrandr --output HDMI1 --mode "$HDMIresolution" --auto
+	echo	"defaults.pcm.card 0" > /home/blas/.asoundrc
+	echo	"defaults.pcm.device 3" >> /home/blas/.asoundrc
+	#3 will enable HDMI audio output
+	echo	"defaults.ctl.card 0" >>  /home/blas/.asoundrc
+	xrandr --output LVDS1 --off
+	xrandr --output VGA1  --off
+#	xrandr --output VGA1 --below LVDS1
+	echo "1" > $flag
+fi
+echo "VGA -- $dmodeVGA /// HDMI -- $dmodeHDMI" | dzen2 -p 5

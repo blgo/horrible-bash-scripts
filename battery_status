@@ -1,0 +1,58 @@
+#!/bin/bash
+function bchrg {
+      # Returns battery charge as a percentage.
+      now=`cat /sys/class/power_supply/BAT0/energy_now`
+      full=`cat /sys/class/power_supply/BAT0/energy_full`
+      out=`echo $now/$full*100 | bc -l  | cut -c 1-5`
+      echo "$out"
+  }
+
+function bcap {
+      # Returns battery capacity as a percentage.
+      design=`cat /sys/class/power_supply/BAT0/charge_full_design`
+      current=`cat /sys/class/power_supply/BAT0/charge_full`
+      out=`echo $current/$design*100 | bc -l | cut -c 1-5`
+      echo "$out"
+}
+
+function bstatus {
+	#Returns charging or discharging
+	status="`cat /sys/class/power_supply/BAT0/device/power_supply/BAT0/status`"
+	echo "$status"
+}
+cd $HOME
+charge=`bchrg`
+charge=${charge%.*}
+COLOR="\e[0;32m"
+COLOR2="^fg(green)"
+if [ $charge -eq 0  ]
+then
+ICON="battery-empty.png" 
+COLOR2="^fg(red)"
+else
+	if [ $charge -lt 20 ]
+	then
+	ICON="battery-caution.png"
+	COLOR="\e[0;31m"
+	COLOR2="^fg(red)"
+	else
+		if [ $charge -lt 40 ]
+		then
+		ICON="battery-low.png"
+		COLOR2="^fg(orange)"
+		else
+			if [ $charge -lt 80 ]
+			then
+			ICON="battery-good.png"
+			else
+			ICON="battery-full.png"
+			fi
+		fi
+	fi
+fi 
+#notify-send -i $HOME/status/$ICON "$charge%" "`bstatus`"
+echo "$COLOR2 `bchrg`% - `bstatus` ^fg()"
+# | dzen2 -p 5
+#echo -e ""$COLOR"battery = `bchrg` "
+#echo "status=`bstatus`"
+#echo -e "\e[0;00m"
