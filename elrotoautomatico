@@ -1,5 +1,5 @@
 #!/bin/bash
-#use geeqie as your view your images
+if [ ! -d "$HOME/Pictures/elroto" ]; then mkdir "$HOME/Pictures/elroto"; fi
 DATE="`date --date='last day' "+%Y/%m/%d"`"
 echo $DATE
 LINK=`wget http://elpais.com/autor/el_roto/a/ -q -O - | grep "$DATE/vinetas" | sed -n '1 p' | sed 's/.*href="\(.*\)".*/\1/'`
@@ -8,6 +8,4 @@ IMAGE=`wget $LINK -q -O - | grep "$DATE" | grep "noticia_normal" | sed 's/.*src=
 echo $IMAGE
 DATE2=`echo "$DATE" | sed 's-\/--g'`
 wget $IMAGE -O "$HOME/Pictures/elroto/elroto$DATE2.jpg"
-if [ ! -d "$HOME/Pictures/elroto" ]; then mkdir "$HOME/Pictures/elroto"; fi
-geeqie $HOME/Pictures/elroto/elroto$DATE2.jpg &
 exit 0
