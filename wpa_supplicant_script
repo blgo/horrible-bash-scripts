@@ -1,6 +1,0 @@
-#!/bin/bash
-rfkill unblock all
-sleep 2
-wpa_supplicant -B -dd -c /etc/wpa_supplicant.conf -D wext -i wlp2s0
-dhcpcd -bd wlp2s0 
-clear

@@ -3,32 +3,43 @@ function func {
 i=0
 while true;
 do
+FG="#999999"
+BG="#224466"
+#CROSS="^ib(1)^fg("$FG")^bg("$BG")x^p(-13)^co(17) ^ib(0)"
+CROSS="^i($HOME/x.xpm)"
+CROSS1="^i($HOME/x-1.xpm)"
 i=0
 CMD="wmctrl -ia "
 CMDx="wmctrl -ic "
-CROSS="^ib(1) x^p(-13)^co(17)^p(-2)"
-WINDOWS=($(wmctrl -l | awk '{print$4$5$6$7}' | sed 's/\(.............\)/\1/g' | tr "\n" " ")) 
+WINDOWS=($(wmctrl -l | sed -e 's/blas\@equipob:/Xterm$/' | awk '{print$4$5$6$7}' | tr "\n" " ")) 
 WINDOWS_ID=($(wmctrl -xl | awk '{print$1}' | tr "\n" " "))
+CURRENT_WORKSPACE="$(wmctrl -d | sed '/\*/!d' | awk '{print$1}')"
+CURRENT_WINDOW_ID="$(wmctrl -l | sed '/[0-f]\ \ '$CURRENT_WORKSPACE'\ /!d' | tail -n 1 | awk '{print$1}')"
 while [ "$i" -lt "${#WINDOWS[*]}" ]
 do
-	DZENLINE["$i"]="$(echo "^ca(1, $CMD ${WINDOWS_ID["$i"]}) ${WINDOWS["$i"]}^ca() ^ca(1, $CMDx ${WINDOWS_ID["$i"]})$CROSS^ca()")"
+	if [ "${WINDOWS_ID["$i"]}" = "$CURRENT_WINDOW_ID"  ]
+	then
+	DZENLINE["$i"]="$(echo "^fg($BG)^bg($FG) ^ca(1, $CMD ${WINDOWS_ID["$i"]})${WINDOWS["$i"]}^ca()^ca(1, $CMDx ${WINDOWS_ID["$i"]})"$CROSS1"^ca()")"
+	else
+	DZENLINE["$i"]="$(echo "^fg($FG)^bg($BG) ^ca(1, $CMD ${WINDOWS_ID["$i"]})${WINDOWS["$i"]}^ca()^ca(1, $CMDx ${WINDOWS_ID["$i"]})$CROSS^ca()")"
+	fi
 	i=$(($i+1))
 done
 i=0
 if [ "${#DZENLINE[*]}" -eq "0" ]
 then
-DZENLINE[0]="^fg(#33bbbb) ^ca(1, xterm -rv ) Welcome to Xmonad!!! ^ca()"
+DZENLINE[0]="^bg("$BG")^fg("$FG") ^ca(1, xterm -rv ) Welcome to Xmonad!!! ^ca()"
 fi
 echo "${DZENLINE[*]} "
 DZENLINE=()
-sleep 1;
+sleep 2;
 done;
 }
 
 function weatherf {
 while true;
 do
-echo "^fg(white)$(head -n1 $HOME/.weatherforecast) ^ca(1, xterm -rv -e "less $HOME/.weatherforecast") $(weather -echo) ^ca() ^fg(red) $(rain | head -n1) "
+echo "^fg(white)$(head -n1 $HOME/.weatherforecast) ^ca(1, xterm -geometry 135x57+200+0 -e "less $HOME/.weatherforecast") $(weather -echo) ^ca() ^fg(red) $(rain | head -n1)"
 sleep 30
 done
 }
@@ -36,16 +47,16 @@ done
 function values { 
 while true
 do 
-echo " $(battery_status) $(date +%H:%M:%S) " 
+echo " $(battery_status) ^ca(1, zenity --calendar) $(date +%H:%M:%S) ^ca()" 
 sleep 1  
 done
 }
 
 
 
-(values | dzen2 -title-name dzenc -y -1 -ta center -bg "#224466" -expand left -e 'entertitle=exec:;leavetitle=exec:' )&
+(values | dzen2 -title-name dzenc -y -1 -ta center -expand left -bg "#224466" -e 'entertitle=exec:;leavetitle=exec:' )&
 (weatherf | dzen2 -title-name dzenb -y -1 -ta center -bg "#224466" -expand right  -e 'entertitle=exec:;leavetitle=exec:' )&
-(func | dzen2 -title-name dzena -ta center -bg "#224466" -expand right -e 'entertitle=exec:;leavetitle=exec:' )&
+(func | dzen2 -title-name dzena -ta center -expand right -bg "#224466" -e 'entertitle=exec:;leavetitle=exec:' )&
 
 #install "wmctrl" from the official repositories
 #add this to make work "wmctrl" in xmonad

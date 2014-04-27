@@ -1,0 +1,2 @@
+#! /bin/bash
+killall dhcpcd wpa_supplicant; sleep 2;  systemctl restart dhcpcd;

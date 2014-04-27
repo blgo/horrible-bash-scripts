@@ -131,13 +131,13 @@ if [ -n "$day" ] && [ $day -eq 1 ]
 		COLOR="^fg(yellow)"
 		else
 		daytime="night"
-		COLOR="^fg(black)"
+		COLOR="^fg(white)"
 	fi
 #notify-send --expire-time=6000 -i "$DIR".weathericons/$ICON "`date +%H:%M`" "`date +%d\ %B\ %n%A`$Temperatura$Viento" 
 #xmessage -timeout 3 ""`date +%H:%M`" "`date +%d\ %B\ %n%A`"$Temperatura$Viento$Lluvia$daytime"
 if [ "$1" != "-echo"  ]
 then
-echo -e "$COLOR`date +%H:%M\ \-\ %d\ %B\ %A` ^fg(green)$Temperatura $Viento $nubes $Lluvia" | dzen2 -p 5 -h 25 &
+echo -e "$COLOR $(date +%H:%M\ \-\ %d\ %B\ %A) ^fg(green)$Temperatura $Viento $nubes $Lluvia" | dzen2 -p 5  &
 fi
 echo -e "$COLOR $(date +%d\ %B\ %A) -- $Temperatura $Viento $nubes "
 }
