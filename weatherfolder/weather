@@ -122,7 +122,7 @@ if [ -n "$WIND" ] && [ `isnumeric "$WIND" ` -eq '0' ]
 	fi
 if [ -n "$TEMPERATURE" ] && [ `isnumeric "$TEMPERATURE"` -eq '0' ]
 	then
-		Temperatura="Temperatura: $TEMPERATUREºC"
+		Temperatura="Temperatura: -- $TEMPERATUREºC"
 		nubes="Nubes:$CLOUDS%"
 	fi
 if [ -n "$day" ] && [ $day -eq 1 ]
@@ -137,9 +137,9 @@ if [ -n "$day" ] && [ $day -eq 1 ]
 #xmessage -timeout 3 ""`date +%H:%M`" "`date +%d\ %B\ %n%A`"$Temperatura$Viento$Lluvia$daytime"
 if [ "$1" != "-echo"  ]
 then
-echo -e "$COLOR $(date +%H:%M\ \-\ %d\ %B\ %A) ^fg(green)$Temperatura $Viento $nubes $Lluvia" | dzen2 -p 5  &
+echo -e "$COLOR $(date +%H:%M\ \-\ %d\ %B\ %A) ^fg(green)$Temperatura $Viento $nubes $Lluvia" | dzen2 -p 5 -bg '#224466' &
 fi
-echo -e "$COLOR $(date +%d\ %B\ %A) -- $Temperatura $Viento $nubes "
+echo -e "$COLOR $(date +%d\ %B\ %A) $Temperatura $Viento $nubes "
 }
 DIR="$HOME/"
 HOUR="`date +%_H`"

@@ -1,13 +1,18 @@
 #! /bin/bash
+FONT=Arial
+BGCOLOR="#224466"
+FGCOLOR="#999999"
+
 function func {
-i=0
+FG="$2"
+BG="$1"
+#CROSS="^ib(1)^fg("$FG")^bg("$BG")x^p(-13)^co(17) ^ib(0)"
+CROSS=" (x)"
+CROSS1=" (x)"
+#CROSS="^i($HOME/x.xpm)"
+#CROSS1="^i($HOME/x-12.xpm)"
 while true;
 do
-FG="#999999"
-BG="#224466"
-#CROSS="^ib(1)^fg("$FG")^bg("$BG")x^p(-13)^co(17) ^ib(0)"
-CROSS="^i($HOME/x.xpm)"
-CROSS1="^i($HOME/x-1.xpm)"
 i=0
 CMD="wmctrl -ia "
 CMDx="wmctrl -ic "
@@ -25,12 +30,7 @@ do
 	fi
 	i=$(($i+1))
 done
-i=0
-if [ "${#DZENLINE[*]}" -eq "0" ]
-then
-DZENLINE[0]="^bg("$BG")^fg("$FG") ^ca(1, xterm -rv ) Welcome to Xmonad!!! ^ca()"
-fi
-echo "${DZENLINE[*]} "
+echo "^bg($FG)^fg($BG) $(($CURRENT_WORKSPACE+1)) ${DZENLINE[*]} "
 DZENLINE=()
 sleep 2;
 done;
@@ -39,7 +39,7 @@ done;
 function weatherf {
 while true;
 do
-echo "^fg(white)$(head -n1 $HOME/.weatherforecast) ^ca(1, xterm -geometry 135x57+200+0 -e "less $HOME/.weatherforecast") $(weather -echo) ^ca() ^fg(red) $(rain | head -n1)"
+echo "^fg(white)$(head -n1 $HOME/.weatherforecast) $moonstateswitch  ^ca(1, xterm -geometry 135x57+200+0 -e "less $HOME/.weatherforecast") $(weather -echo) ^ca() ^fg(red) $(rain | head -n1)"
 sleep 30
 done
 }
@@ -47,16 +47,15 @@ done
 function values { 
 while true
 do 
-echo " $(battery_status) ^ca(1, zenity --calendar) $(date +%H:%M:%S) ^ca()" 
+CPUTEMP="$(sensors | sed -e '/Core/!d' -e 's/+\([0-9][0-9]\.[0-9]°C\).*/ \1 /' -e 's/\ //g' | tr "\n" " ")"
+echo " $(battery_status)$CPUTEMP ^ca(1, zenity --calendar) $(date +%H:%M:%S) ^ca()" 
 sleep 1  
 done
 }
 
-
-
-(values | dzen2 -title-name dzenc -y -1 -ta center -expand left -bg "#224466" -e 'entertitle=exec:;leavetitle=exec:' )&
-(weatherf | dzen2 -title-name dzenb -y -1 -ta center -bg "#224466" -expand right  -e 'entertitle=exec:;leavetitle=exec:' )&
-(func | dzen2 -title-name dzena -ta center -expand right -bg "#224466" -e 'entertitle=exec:;leavetitle=exec:' )&
+(values   | dzen2 -fn $FONT -title-name dzenc -y -1 -ta center -expand left -bg $BGCOLOR -e 'entertitle=exec:;leavetitle=exec:' )&
+(weatherf | dzen2 -fn $FONT -title-name dzenb -y -1 -ta center -bg $BGCOLOR -expand right  -e 'entertitle=exec:;leavetitle=exec:' )&
+(func $BGCOLOR $FGCOLOR | dzen2 -fn $FONT -title-name dzena -ta center -expand right -bg $BGCOLOR -e 'entertitle=exec:;leavetitle=exec:' )&
 
 #install "wmctrl" from the official repositories
 #add this to make work "wmctrl" in xmonad

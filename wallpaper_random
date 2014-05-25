@@ -1,11 +1,12 @@
 #!/bin/bash
+system_screen_resolution="$(xrandr | sed -n '/*/p' | awk '{print$1}' | sed -n '1 p' )"
 if [ ! -d $HOME/Pictures ]; then mkdir $HOME/Pictures; fi;
 if [ ! -d $HOME/Pictures/wallpapers ]; then mkdir $HOME/Pictures/wallpapers; fi;
 echo "loading a fully new random wallpaper,be ready..."
 DATE=`date +%H%M%S`
-wget `wget http://wallpaperstock.net/random-wallpapers.html -q -O - | grep  "<a  href='/" |  sed 's/.*href=.*\/\(.*\).html.*/http:\/\/wallpaperstock.net\/\1.html/g' | shuf -n1 | sed 's/_w\([0-9].*\).html/_\1_1366x768.jpg/'` -O $HOME/Pictures/wallpapers/wallpaper$DATE.jpg 
+wget `wget http://wallpaperstock.net/random-wallpapers.html -q -O - | grep  "<a  href='/" |  sed 's/.*href=.*\/\(.*\).html.*/http:\/\/wallpaperstock.net\/\1.html/g' | shuf -n1 | sed 's/_w\([0-9].*\).html/_\1_'$system_screen_resolution'.jpg/'` -O $HOME/Pictures/wallpapers/wallpaper$DATE.jpg 
 PIC=$HOME/Pictures/wallpapers/wallpaper$DATE.jpg
-if [ -e $HOME/Pictures/wallpapers/wallpaper$DATE.jpg ]; 
+if [ -s $HOME/Pictures/wallpapers/wallpaper$DATE.jpg ]; 
 then 
 cp $HOME/Pictures/wallpapers/wallpaper$DATE.jpg $HOME/.background.jpg
 hsetroot -center $HOME/.background.jpg
