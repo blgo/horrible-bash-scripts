@@ -55,7 +55,7 @@ done
 
 (values   | dzen2 -fn $FONT -title-name dzenc -y -1 -ta center -expand left -bg $BGCOLOR -e 'entertitle=exec:;leavetitle=exec:' )&
 (weatherf | dzen2 -fn $FONT -title-name dzenb -y -1 -ta center -bg $BGCOLOR -expand right  -e 'entertitle=exec:;leavetitle=exec:' )&
-(func $BGCOLOR $FGCOLOR | dzen2 -fn $FONT -title-name dzena -ta center -expand right -bg $BGCOLOR -e 'entertitle=exec:;leavetitle=exec:' )&
+(func $BGCOLOR $FGCOLOR | dzen2 -fn $FONT -title-name dzena -ta center -expand right -bg $BGCOLOR -e 'entertitle=exec:;leavetitle=exec:' -dock )&
 
 #install "wmctrl" from the official repositories
 #add this to make work "wmctrl" in xmonad
