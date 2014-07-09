@@ -1,0 +1,39 @@
+#! /bin/bash
+function colores {
+COLOR=0
+while true;
+do
+COLOR="$(($COLOR+100))"
+if [ -z "$(echo $COLOR | sed 's/[0-9]//')"  ]
+	then
+	echo "^bg(#00000$COLOR)                                                                                                                                                               "
+	else
+	if [ -z "$(echo $COLOR | sed 's/[0-9][0-9]//')"  ]
+		then
+		echo "^bg(#0000$COLOR)                                                                                                            "
+		else
+		if [ -z "$(echo $COLOR | sed 's/[0-9][0-9][0-9]//')"  ]
+			then
+			echo "^bg(#000$COLOR)                                                                                                                              "
+			else
+			if [ -z "$(echo $COLOR | sed 's/[0-9][0-9][0-9][0-9]//')"  ]
+				then
+				echo "^bg(#00$COLOR)                                                                                                                                        "
+				else
+					if [ -z "$(echo $COLOR | sed 's/[0-9][0-9][0-9][0-9][0-9]//')"  ]
+						then
+						echo "^bg(#0$COLOR)                                                                                                                             "
+						else
+						if [ -z "$(echo $COLOR | sed 's/[0-9][0-9][0-9][0-9][0-9][0-9]//')"  ]
+							then
+							echo "^bg(#$COLOR)                                                                                                                                             "
+						fi
+					fi
+				fi
+			fi
+		fi
+	fi	
+done
+}
+colores | dzen2
+

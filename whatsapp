@@ -1,0 +1,13 @@
+#!/bin/bash
+#wmctrl works in xmonad when "XMonad.Hooks.EwmhDesktops" is enabled 
+#this script uses keybindings from Xmonad to interact with the X window manager
+if [ -n "$(ps -e | grep emulator64-x86)" ]  
+then
+	wmctrl -xa "emulator64-x86"
+else
+	echo "loading whatsapp" | dzen2 -p 10 -bg '#224466' -fg '#999999' -expand left
+	LANG=es_ES.UTF-8 emulator64-x86 -avd Whatsapp 
+	FILE="$(ls /tmp/android-blas/emulator-*)" 
+	if [ -e "$FILE" ]; then rm "$FILE"; fi
+	echo "Closing Whatsapp" | dzen2 -p 3  -bg '#224466' -fg '#999999' -expand left
+fi

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+etckeeper pre-install
+pacmatic -Syu
+etckeeper post-install

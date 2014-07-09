@@ -1,0 +1,22 @@
+#!/bin/bash
+echo "archuser" > /etc/hostname
+ln -s /usr/share/zoneinfo/Europe/Madrid /etc/localtime
+cat /etc/locale.gen | sed 's/#es_ES ISO-8859-1/es_ES ISO-8859-1/' > /etc/locale.gen
+locale-gen
+echo "LANG="es_ES.ISO8859-1"" > /etc/locale.conf
+echo "LC_TIME="es_ES.ISO8859-1"" >> /etc/locale.conf
+echo "KEYMAP=es" > /etc/vconsole.conf
+mkinitcpio -p linux
+echo "WRITE NOW YOUR ROOT PASSWORD"
+passwd 
+grub-install --target=i386-pc --recheck --debug /dev/sda
+grub-mkconfig -o /boot/grub/grub.cfg
+vim /boot/syslinux/syslinux.cfg
+useradd -m -g users -G wheel -s /bin/bash user
+echo "WRITE NOW YOUR USER PASSWORD"
+passwd user
+rm -R /home/user
+mkdir /home/user
+su user
+git clone ihttps://github.com/jblasgf/xmonad-lightconfig
+
