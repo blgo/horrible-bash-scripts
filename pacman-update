@@ -1,5 +1,5 @@
 #!/bin/bash
-
+reflector --verbose -l 10 -f 5 --sort rate --save /etc/pacman.d/mirrorlist
 etckeeper pre-install
 pacmatic -Syu
 etckeeper post-install
