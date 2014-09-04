@@ -1,5 +1,6 @@
 #! /bin/bash
 #The argument is the city, if no argument is given, the weatherforecast data is updated 
+cp .weatherforecast .weatherforecast_swap
 if [ "$1" = "geo" ]; then UCITY="$(geolocalization)"; else
 	if [ -n "$1" ]; then UCITY="$1"; else
 		UCITY="`head -n 1 ./.weatherforecast | sed 's/Estas en //'`"
@@ -8,4 +9,9 @@ fi
 	/home/blas/scripts/weatherfolder/download_weatherforecast "$UCITY"
 	/home/blas/scripts/weatherfolder/moon_state "$UCITY"
 	/home/blas/scripts/weatherfolder/sunsethour "$UCITY"
-exit 0
+if [ "$(ls -l .weatherforecast | awk '{print$5}')" -lt 1000 ]
+then 
+	echo "your are not connected to internet"
+	rm .weatherforecast
+	mv .weatherforecast_swap .weatherforecast
+fi

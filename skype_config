@@ -1,0 +1,5 @@
+! /bin/bash
+pulseaudio --start
+export PULSE_LATENCY_MSEC=60
+skype
+pulseaudio --kill

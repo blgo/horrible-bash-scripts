@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ -z "$(wmctrl -lx | grep skype.Skype)" ]
+	then
+	skype &
+	else
+	wmctrl -xa skype.Skype
+fi

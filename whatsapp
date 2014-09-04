@@ -1,14 +1,19 @@
 #!/bin/bash
 #wmctrl works in xmonad when "XMonad.Hooks.EwmhDesktops" is enabled 
 #this script uses keybindings from Xmonad to interact with the X window manager
-if [ -n "$(ps -e | grep emulator64-x86)" ]  
+if [ -z "$( wmctrl -xl | awk '{print$3}' | sed '/Chromium.Chromium/!d')" ]
 then
-  	echo "Closing whatsapp" | dzen2 -p 10 -bg '#22446    6' -fg '#999999' -expand left
-	#wmctrl -xa "emulator64-x86"
-	killall -s KILL emulator64-x86
-	FILE="$(ls /tmp/android-blas/emulator-*)" 
-	if [ -e "$FILE" ]; then rm "$FILE"; fi
+	if [ -n "$(ps -e | grep emulator64-x86)" ]  
+	then
+		echo "Closing whatsapp" | dzen2 -p 10 -bg '#22446    6' -fg '#999999' -expand left
+		#wmctrl -xa "emulator64-x86"
+		killall -s KILL emulator64-x86
+		FILE="$(ls /tmp/android-blas/emulator-*)" 
+		if [ -e "$FILE" ]; then rm "$FILE"; fi
+	else
+		echo "loading whatsapp" | dzen2 -p 10 -bg '#224466' -fg '#999999' -expand left
+		emulator64-x86 -avd Whatsapp &
+	fi
 else
-	echo "loading whatsapp" | dzen2 -p 10 -bg '#224466' -fg '#999999' -expand left
-	emulator64-x86 -avd Whatsapp &
+		echo "Close Chrome to free memory before start Whatsapp!" | dzen2 -p 5 -bg '#224466' -fg '#999999' -expand left
 fi

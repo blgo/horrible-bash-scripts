@@ -1,11 +1,15 @@
-# !/bin/bash
-#xvkbd send text lines like a virtual keyboard
-#this script uses keybindings from Xmonad to interact with the X window manager
-if [ -n "$(ps -e | grep chromium)" ]  
+#!/bin/bash
+if [ -z "$(wmctrl -xl | awk '{print$3}' | sed '/emulator64-x86.emulator64-x86/!d')" ]
 then
-wmctrl -xa chromium
-sleep 0.1
-xvkbd -text "\Ct" #Control-t, new tab in current chromium session
+
+	if [ -n "$(ps -e | grep chromium)" ]  
+	then
+	wmctrl -xa chromium
+	sleep 0.1
+	xvkbd -text "\Ct"
+	else
+	chromium
+	fi
 else
-chromium
+               echo "Close Whatsapp to free memory before start Chromium!" | dzen2 -p 5 -bg '#224466' -fg '#999999' -expand left
 fi

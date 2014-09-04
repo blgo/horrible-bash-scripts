@@ -16,8 +16,8 @@ do
 i=0
 CMD="wmctrl -ia "
 CMDx="wmctrl -ic "
-WINDOWS=($(wmctrl -l | sed -e 's/blas\@equipob:/Xterm$/' | awk '{print$4$5$6$7}' | tr "\n" " ")) 
-WINDOWS_ID=($(wmctrl -xl | awk '{print$1}' | tr "\n" " "))
+WINDOWS=($(wmctrl -l | sed '/kype/d' | sed -e 's/blas\@equipob:/Xterm$/' | awk '{print$4$5$6$7}' | tr "\n" " " )) 
+WINDOWS_ID=($(wmctrl -xl | sed '/kype/d' | awk '{print$1}' | tr "\n" " " ))
 CURRENT_WORKSPACE="$(wmctrl -d | sed '/\*/!d' | awk '{print$1}')"
 CURRENT_WINDOW_ID="$(wmctrl -l | sed '/[0-f]\ \ '$CURRENT_WORKSPACE'\ /!d' | tail -n 1 | awk '{print$1}')"
 while [ "$i" -lt "${#WINDOWS[*]}" ]
@@ -30,7 +30,7 @@ do
 	fi
 	i=$(($i+1))
 done
-echo "^bg($FG)^fg($BG) $(($CURRENT_WORKSPACE+1)) ${DZENLINE[*]} "
+echo "^bg($FG)^fg($BG) $(($CURRENT_WORKSPACE+1)) ^bg(#446688)^fg($FG) ^ca(1,  skype_script ) Skype ^ca()${DZENLINE[*]} "
 DZENLINE=()
 sleep 2;
 done;
@@ -39,7 +39,7 @@ done;
 function weatherf {
 while true;
 do
-echo "^fg(white)$(head -n1 $HOME/.weatherforecast) $moonstateswitch  ^ca(1, xterm -geometry 135x57+200+0 -e "less $HOME/.weatherforecast") $(weather -echo) ^ca() ^fg(red) $(rain | head -n1)"
+echo "^fg(white)$(head -n1 $HOME/.weatherforecast) $moonstateswitch  ^ca(1,  "libreoffice $HOME/.weatherforecast") $(rain | head -n1)^ca()"
 sleep 30
 done
 }
