@@ -2,7 +2,7 @@
 #elinks package is required
 #Get the current city
 #________________This get the current city__________________________
-UCITY="$(elinks --dump http://www.geoiptool.com/es/ | grep Ciudad | sed 's/Ciudad:\([a-Z]*\)/\1/' | sed -e 's/\([a-Z]\)\ \([a-Z]\)/\1-\2/g'  -e 's/\ //g' |  awk '{print tolower($0)}' |sed -e 's/á/a/g' -e 's/á/a/g' -e 's/é/e/g' -e 's/í/i/g' -e 's/ó/o/g' -e 's/ú/u/g' -e 's/│//g')"
+UCITY="$(elinks --dump http://www.geoiptool.com/es/ | grep Ciudad | sed 's/Ciudad:\([a-Z]*\)/\1/' | sed -e 's/\([a-Z]\)\ \([a-Z]\)/\1-\2/g'  -e 's/\ //g' |  awk '{print tolower($0)}' |sed -e 's/á/a/g' -e 's/á/a/g' -e 's/é/e/g' -e 's/í/i/g' -e 's/ó/o/g' -e 's/ú/u/g' -e 's/│//g' -e '1 !d')"
 case "$UCITY" in
 laga) 
 	UCITY="malaga"

@@ -1,13 +1,9 @@
 #! /bin/bash
 UCITY="$1"
-cd /home/$USER/
-elinks -dump http://www.eltiempo.es/$UCITY.html > ./temporal1
-sed     -e '/Visibilidad/,/Actualizada/ !d' \
+output="$(elinks -dump http://www.eltiempo.es/$UCITY.html)"
+echo "$output" | sed     -e '/Visibilidad/,/Actualizada/ !d' \
         -e '/[a-Z]/ d' \
         -e 's/\([0-9][0-9]:[0-9][0-9]\)\ *\1\ *\1//g' \
-        -e '/[0-9][0-9]:[0-9][0-9]/!d' < ./temporal1 | awk '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12"\t"$13"\t"$14}' >> ./.weatherforecast
-if [ "$2" = -echo ]; then
-	less ./temporal1
-fi
-rm ./temporal1
-exit 0
+        -e '/^$/d' \
+	-e '/\[/d' \
+        -e '/[0-9][0-9]:[0-9][0-9]/!d' | awk '{print $2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12"\t"$13"\t"$14}'

@@ -1,28 +1,21 @@
 #!/bin/bash
-cd /home/$USER/ 
+cd $HOME
 UCITY="$1"
-echo "the current city is $UCITY"
-elinks -dump http://www.eltiempo.es/$UCITY.html?v=por_hora  > ./temporal
-echo "Estas en $UCITY" > ./.weatherforecast
-echo -e "Hora\tTemp\tViento\tRachas\tLluvia\tNubes\tTorm\tHumedad\tPresion" >> ./.weatherforecast
-sed	-e '/Desglose/,/References/ !d' \
-	-e '/Hora/d'\
-	-e '/References*/d' \
-	-e '/Foto/,/Email/d' \
+output="$(elinks -dump http://www.eltiempo.es/$UCITY.html?v=por_hora)" 
+echo -e "$output" | sed -e '/Desglose/,/References/ !d' \
 	-e '/\[/d' \
-	-e '/Aviso/d' \
-	-e '/truenos*/d' \
-	-e '/hora*/d' \
         -e 's/\([1-9]\)\,\([0-9]\)/\1\2 /' \
         -e 's/\([1-9]\)\.\([0-9]\)/\1\2 /' \
         -e 's/0\,\([0-9]\)/\1 /' \
    	-e 's/0\.\([0-9]\)/\1 /' \
 	-e 's/\([a-Z]\):/\1/' \
-	-e '/Desglose/d' \
 	-e 's/hPa//g' \
 	-e 's/mm//g' \
 	-e '/km*/d' \
 	-e '/\*/d' \
-	-e '/^$/d'  < ./temporal | awk '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12"\t"$13"\t"$14}' >> ./.weatherforecast 
-rm ./temporal
+	-e '/[0-9][0-9]:/!d' \
+	-e '/^$/d' > ./.weatherforecast | awk '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12"\t"$13"\t"$14}' 
+	echo "$UCITY" >> ./.weatherforecast
+cat ./.weatherforecast
+
 exit 0

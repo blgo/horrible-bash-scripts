@@ -7,7 +7,7 @@ if [ "$1" = "geo" ]; then UCITY="$(geolocalization)"; else
 	fi
 fi
 	/home/blas/scripts/weatherfolder/download_weatherforecast "$UCITY"
-	/home/blas/scripts/weatherfolder/moon_state "$UCITY"
+	#/home/blas/scripts/weatherfolder/moon_state "$UCITY"
 	/home/blas/scripts/weatherfolder/sunsethour "$UCITY"
 if [ "$(ls -l .weatherforecast | awk '{print$5}')" -lt 1000 ]
 then 
