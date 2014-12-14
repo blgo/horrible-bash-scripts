@@ -1,0 +1,14 @@
+#! /bin/bash
+if [ -e "cs.txt" ]
+then
+elinks -dump https://www.couchsurfing.org/n/places/bristol-england-united-kingdom | grep -A 5 Private | sed -e 's/.*Private_message/Message/' -e '/\_/d' -e '/\[/d' -e '/\-/d' > cs_new.txt
+else
+elinks -dump https://www.couchsurfing.org/n/places/bristol-england-united-kingdom | grep -A 5 Private | sed -e 's/.*Private_message/Message/' -e '/\_/d' -e '/\[/d' -e '/\-/d' > cs.txt
+fi
+if [ -n "$(diff -q cs.txt cs_new.txt)" ]
+then
+diff --suppress-common-lines cs.txt cs_new.txt | sed -n '/>/p' | sed 's/>//' > difftemp
+echo "^ca(1, libreoffice --writer difftemp)^bg(#446688)^fg(red)New messages in CS Bristol! ^ca()" | dzen2 -p -y -1 -x 550 -w 210
+rm difftemp
+fi
+mv cs_new.txt cs.txt

@@ -39,8 +39,8 @@ done;
 function weatherf {
 while true;
 do
-echo "^fg(white)$(head -n1 $HOME/.weatherforecast | sed 's/Estas en/You are in/g ') $moonstateswitch^ca(1,  "libreoffice $HOME/.weatherforecast") $(rain | head -n1)^ca()"
-sleep 30
+echo "^fg(white)^ca(1,  "libreoffice $HOME/.weatherforecast") $(rain | head -n1)^ca()"
+sleep 120
 done
 }
 
@@ -48,8 +48,8 @@ function values {
 while true
 do 
 CPUTEMP="$(sensors | sed -e '/Core/!d' -e 's/+\([0-9][0-9]\.[0-9]°C\).*/ \1 /' -e 's/\ //g' | tr "\n" " ")"
-echo " $(battery_status)$CPUTEMP ^ca(1, zenity --calendar) $(date +%H:%M:%S) ^ca()" 
-sleep 1  
+echo " $(battery_status)$CPUTEMP ^ca(1, zenity --calendar) $(date +%H:%M) ^ca()" 
+sleep 60
 done
 }
 

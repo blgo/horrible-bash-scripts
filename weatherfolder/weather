@@ -24,33 +24,6 @@ echo ""
 fi
 }
 
-function newday {
-if [ $HOUR -eq 24 ]
-then 
-HOUR=00
-fi
-}
-
-function currentday {
-LINE=`cat -n "$DIR".weatherforecast | sed -e '/[a-Z]*,/!d' -e 's/[a-Z]*,//' -e 's/\t/\ /g' -e 's/\ *//' |  grep $DAY | awk '{print$1}'`
-sed ''$LINE',100 !d' < "$DIR".weatherforecast | grep -m 1 "$HOUR:00" > "$DIR".weatherforecast1
-TEMPERATURE="`awk '{ print $2 }' < "$DIR".weatherforecast1 | sed 's/º//'`"
-WIND="`awk '{ print $4 }' < "$DIR".weatherforecast1`"
-RAIN="`awk '{ print $5 }' < "$DIR".weatherforecast1`"
-CLOUDS="`awk '{ print $6 }' < "$DIR".weatherforecast1 | sed 's/%/ /' `"
-}
-
-function sunshinetime {
-NUMBEROFLINES="`wc -l < "$DIR".weatherforecast`"
-AMANECERLINE="$(($NUMBEROFLINES-1))"
-AMANECERTIME="`awk '{print$1}' < "$DIR".weatherforecast | sed -e ''$AMANECERLINE' !d'`"
-SUNSHINEHOUR="`echo "$AMANECERTIME" | sed -e 's/\([0-9][0-9]\):[0-9][0-9]/\1/' -e 's/0\([0-9]\)/\1/g'`"
-SUNSHINEMINUTE="`echo "$AMANECERTIME" | sed -e 's/[0-9][0-9]:\([0-9][0-9]\)/\1/' -e 's/0\([0-9]\)/\1/g'`"
-OCASOLINE="$NUMBEROFLINES"
-OCASOTIME="`awk '{print$1}' < "$DIR".weatherforecast | sed -e ''$OCASOLINE' !d'`"
-SUNSETHOUR="`echo "$OCASOTIME" | sed -e 's/\([0-9][0-9]\):[0-9][0-9]/\1/' -e 's/0\([0-9]\)/\1/g'`"
-SUNSETMINUTE="`echo "$OCASOTIME" | sed -e 's/[0-9][0-9]:\([0-9][0-9]\)/\1/' -e 's/0\([0-9]\)/\1/g'`"
-}
 function chooseicon {
 DAY="`date +%_d`"
 HOUR="`date +%_H`"
@@ -133,25 +106,18 @@ if [ -n "$day" ] && [ $day -eq 1 ]
 		daytime="night"
 		COLOR="^fg(white)"
 	fi
-#notify-send --expire-time=6000 -i "$DIR".weathericons/$ICON "`date +%H:%M`" "`date +%d\ %B\ %n%A`$Temperatura$Viento" 
-#xmessage -timeout 3 ""`date +%H:%M`" "`date +%d\ %B\ %n%A`"$Temperatura$Viento$Lluvia$daytime"
 if [ "$1" != "-echo"  ]
 then
 echo -e "$COLOR $(date +%H:%M\ \-\ %d\ %B\ %A) ^fg(green)$Temperatura $Viento $nubes $Lluvia" | dzen2 -p 5 -bg '#224466' &
 fi
 echo -e "$COLOR $(date +%d\ %B\ %A) $Temperatura $Viento $nubes "
 }
+
 DIR="$HOME/"
 HOUR="`date +%_H`"
 MINUTE="`date +%_M`"
 MONTH="`date +%b`"
 DAY="`date +%d`"
 HOUR=$(( $HOUR + 1 ))
-newday
-currentday
-sunshinetime
-chooseicon
 notify $1
 debug $1
-rm ""$DIR".weatherforecast1"
-exit 0

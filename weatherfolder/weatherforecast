@@ -9,6 +9,8 @@ fi
 	/home/blas/scripts/weatherfolder/download_weatherforecast "$UCITY"
 	#/home/blas/scripts/weatherfolder/moon_state "$UCITY"
 	/home/blas/scripts/weatherfolder/sunsethour "$UCITY"
+	echo "$UCITY" >> ./.weatherforecast
+	cat ./.weatherforecast
 if [ "$(ls -l .weatherforecast | awk '{print$5}')" -lt 1000 ]
 then 
 	echo "your are not connected to internet"
