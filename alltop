@@ -1,0 +1,8 @@
+#! /bin/bash
+wlanInterface="$(ifconfig | egrep "wlp[0-9]" | awk '{print$1}' | sed 's/://g')"
+sudo echo ""
+sudo xterm -rv -e airmon-ng start $wlanInterface
+(xterm -rv -e htop)&
+(sudo xterm -rv -e iftop -P -i $wlanInterface)&
+(sudo xterm -rv -e airodump-ng mon0)&
+sudo iotop -oa

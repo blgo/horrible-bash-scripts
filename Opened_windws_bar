@@ -1,11 +1,17 @@
 #! /bin/bash
 FONT=Arial
-BGCOLOR="#224466"
-FGCOLOR="#999999"
+##BGCOLOR="black"
+#BGCOLOR="#224466"
+#FGCOLOR="#999999"
+
+FGCOLOR="black"
+#BGCOLOR="#224466"
+BGCOLOR="#999999"
 
 function func {
 FG="$2"
 BG="$1"
+TERM="$3"
 #CROSS="^ib(1)^fg("$FG")^bg("$BG")x^p(-13)^co(17) ^ib(0)"
 CROSS=" (x)"
 CROSS1=" (x)"
@@ -16,21 +22,27 @@ do
 i=0
 CMD="wmctrl -ia "
 CMDx="wmctrl -ic "
-WINDOWS=($(wmctrl -l | sed '/kype/d' | sed -e 's/blas\@equipob:/Xterm$/' | awk '{print$4$5$6$7}' | tr "\n" " " )) 
-WINDOWS_ID=($(wmctrl -xl | sed '/kype/d' | awk '{print$1}' | tr "\n" " " ))
+WINDOWS=($(wmctrl -xl | sed '/www.blackl.com__black-google.php/d' | sed '/kype/d' | sed '/derbird/d' | sed '/'$TERM'/d' |  awk -F " " '{print$5}' | tr "\n" " " )) 
+WINDOWS_ID=($(wmctrl -xl | sed '/www.blackl.com__black-google.php/d' | sed '/kype/d' | sed '/derbird/d' | sed '/'$TERM'/d' | awk '{print$1}' | tr "\n" " " ))
+CURRENT_WORKSPACE_NAME="$(wmctrl -d | sed '/\*/!d' | awk '{print$9}')"
 CURRENT_WORKSPACE="$(wmctrl -d | sed '/\*/!d' | awk '{print$1}')"
 CURRENT_WINDOW_ID="$(wmctrl -l | sed '/[0-f]\ \ '$CURRENT_WORKSPACE'\ /!d' | tail -n 1 | awk '{print$1}')"
-while [ "$i" -lt "${#WINDOWS[*]}" ]
+while [ "$i" -le "${#WINDOWS[*]}" ]
 do
-	if [ "${WINDOWS_ID["$i"]}" = "$CURRENT_WINDOW_ID"  ]
-	then
-	DZENLINE["$i"]="$(echo "^fg($BG)^bg($FG) ^ca(1, $CMD ${WINDOWS_ID["$i"]})${WINDOWS["$i"]}^ca()^ca(1, $CMDx ${WINDOWS_ID["$i"]})"$CROSS1"^ca()")"
-	else
-	DZENLINE["$i"]="$(echo "^fg($FG)^bg($BG) ^ca(1, $CMD ${WINDOWS_ID["$i"]})${WINDOWS["$i"]}^ca()^ca(1, $CMDx ${WINDOWS_ID["$i"]})$CROSS^ca()")"
-	fi
-	i=$(($i+1))
+    if [ "$i" -eq "${#WINDOWS[*]}" ]; then DZENLINE["$i"]="^fg($BG)^bg($FG)^ca(0, exec ) ^ca()"; else #Correct a suspected bug on dzen2 and the ^ca COMMAND
+        if [ "${WINDOWS_ID["$i"]}" = "$CURRENT_WINDOW_ID"  ]
+        then
+        DZENLINE["$i"]="$(echo "^fg($BG)^bg($FG) ^ca(1, $CMD ${WINDOWS_ID["$i"]})${WINDOWS["$i"]}^ca()^ca(1, $CMDx ${WINDOWS_ID["$i"]})"$CROSS1"^ca()")"
+        else
+        DZENLINE["$i"]="$(echo "^fg($FG)^bg($BG) ^ca(1, $CMD ${WINDOWS_ID["$i"]})${WINDOWS["$i"]}^ca()^ca(1, $CMDx ${WINDOWS_ID["$i"]})$CROSS^ca()")"
+        fi
+    fi
+    i=$(($i+1))
 done
-echo "^bg($FG)^fg($BG) $(($CURRENT_WORKSPACE+1)) ^bg(#446688)^fg($FG) ^ca(1,  skype_script ) Skype ^ca()${DZENLINE[*]} "
+
+XtermCOUNT="$(wmctrl -xl | grep -c xterm)"
+
+echo "^bg($FG)^fg($BG) ^bg($BG)^fg($FG) ^ca(1,  skype_script ) Skype ^ca()^bg(#446688)^bg($FG)^fg($BG) ^bg($BG)^fg($FG)^ca(1,  thunderbird ) Mail ^ca()^bg($FG)^fg($BG) ^bg($BG)^fg($FG)^ca(1,  wmctrl -xla $TERM) $TERM:$XtermCOUNT ^ca()^bg($FG)^fg($BG) ${DZENLINE[*]} "
 DZENLINE=()
 sleep 2;
 done;
@@ -39,7 +51,7 @@ done;
 function weatherf {
 while true;
 do
-echo "^fg(white)^ca(1,  "libreoffice $HOME/.weatherforecast") $(rain | head -n1)^ca()"
+echo "^fg(white)^ca(1,  "gvim $HOME/.weatherforecast")$(rain | head -n1)^ca()"
 sleep 120
 done
 }
@@ -52,10 +64,24 @@ echo " $(battery_status)$CPUTEMP ^ca(1, zenity --calendar) $(date +%H:%M) ^ca()"
 sleep 60
 done
 }
-
-(values   | dzen2 -fn $FONT -title-name dzenc -y -1 -ta center -expand left -bg $BGCOLOR -e 'entertitle=exec:;leavetitle=exec:' )&
-(weatherf | dzen2 -fn $FONT -title-name dzenb -y -1 -ta center -bg $BGCOLOR -expand right  -e 'entertitle=exec:;leavetitle=exec:' )&
-(func $BGCOLOR $FGCOLOR | dzen2 -fn $FONT -title-name dzena -ta center -expand right -bg $BGCOLOR -e 'entertitle=exec:;leavetitle=exec:' -dock )&
+function desktops {
+DZENLINE=()
+DZENLINE[0]="Desktop\n"
+DZENLINE[1]="^ca(1, wmctrl -s 0) 1:Chrome ^ca()\n"
+DZENLINE[2]="^ca(1, wmctrl -s 1) 2:Console ^ca()\n"
+DZENLINE[3]="^ca(1, wmctrl -s 2) 3:Mail ^ca()\n"
+DZENLINE[4]="^ca(1, wmctrl -s 3) 4:Thunar ^ca()\n"
+DZENLINE[5]="^ca(1, wmctrl -s 4) 5:App ^ca()\n"
+DZENLINE[6]="^ca(1, wmctrl -s 5) 6:Skype ^ca()\n"
+DZENLINE[7]="^ca(1, wmctrl -s 6) 7:Vlc ^ca()"
+echo -e "${DZENLINE[*]}"
+}
+(echo "" | dzen2 -p -bg black -fn $FONT) &
+(echo "" | dzen2 -p -bg black -fn $FONT -y -1) &
+sleep 0.1; (desktops | dzen2 -title-name dzenc -x 0 -w 80 -m -l 7 -fn $FONT -fg $FGCOLOR -bg $BGCOLOR  -ta center -sa center -p  -e 'button1=togglecollapse;entertitle=togglecollapse;leaveslave=collapse' ) &
+sleep 0.1; (values   | dzen2 -fn $FONT -title-name dzenc -y -1 -ta center -expand left  -fg $FGCOLOR -bg $BGCOLOR -e 'entertitle=exec:;leavetitle=exec:' -dock )&
+sleep 0.1; (weatherf | dzen2 -fn $FONT -title-name dzenc -y -1 -ta center -bg $BGCOLOR -expand right  -e 'entertitle=exec:;leavetitle=exec:' -dock)&
+sleep 0.1; (func $BGCOLOR $FGCOLOR $1 | dzen2 -x 80 -fn $FONT -title-name dzenc -ta center -expand right -bg $BGCOLOR -e 'entertitle=exec:;leavetitle=exec: ' -dock )&
 
 #install "wmctrl" from the official repositories
 #add this to make work "wmctrl" in xmonad

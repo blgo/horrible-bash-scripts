@@ -10,6 +10,7 @@ if [ -s $HOME/Pictures/wallpapers/wallpaper$DATE.jpg ];
 then 
 cp $HOME/Pictures/wallpapers/wallpaper$DATE.jpg $HOME/.background.jpg
 hsetroot -center $HOME/.background.jpg
+convert  $HOME/.background.jpg  $HOME/.background.png
 else
 rm "$PIC"
 fi

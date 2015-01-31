@@ -1,40 +1,34 @@
 #! /bin/bash
-function isnumeric {
-if [ -n "`echo $1 | sed 's/[0-9]//g'`" ]; then
-    echo '1' #is not numeric 
-else
-    echo '0' #is numeric
-fi
-}
 function rains {
-if [ ! -e ./.weatherforecast ]; then echo "No weatheforecast data stored"; else
+BGCOLOR="Black"
+FGCOLOR="#999999"
+output=""
+if [ ! -e ./.weatherforecast ]; then output= "No weatheforecast data stored"; else
 	RAINvector=($(cat ./.weatherforecast | awk '{print$5}' | sed -n '/[0-9]/p' | sed -n '1,24 p' | tr "\n" "\ "))	
  	TIMEvector=($(cat ./.weatherforecast | awk '{print$1}' | sed -n '/[0-9]/p' | sed -n '1,24 p' | tr "\n" "\ ")) 
 	i=0
-	w=(0) # not rainning
  	while [ "$i" -lt "${#RAINvector[*]}" ]
 	do
 		if [ "${RAINvector["$i"]}" -ge 10 ]	
 		then	
-			#it's rainning a bit
-				echo ""${TIMEvector[$i]}" It will rain a lot"
+				output=""${TIMEvector[$i]}" It will rain a lot "
+                break
 			else
 			if [ "${RAINvector["$i"]}" -ge 5  ]	
 			then	
-				u=$(($u+1))
-				#it's rainning 
-					echo ""${TIMEvector[$i]}" It will rain"
+					output=""${TIMEvector[$i]}" It will rain "
+                    break
 				else
 				if [ "${RAINvector["$i"]}" -ge 1 ]	
 				then	
-					u=$(($u+1))
-					#it's rainning a lot
-					echo ""${TIMEvector[$i]}" It will rain a bit"
+					output=""${TIMEvector[$i]}" It will rain a bit ";
+                    break
 				fi
 			fi
 		fi
 		i=$(($i+1))
 	done	
 fi
+echo "^bg($BGCOLOR)^fg($FGCOLOR)$(tail -n 1 .weatherforecast | awk '{print toupper($1)}') $( tail -n 5 .weatherforecast | sed -n '/Update/p' | sed -e 's/^  //' -e 's/\.$//') ^fg($BGCOLOR)^bg($FGCOLOR)$output"
 }
 rains

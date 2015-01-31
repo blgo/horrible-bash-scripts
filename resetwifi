@@ -1,6 +1,7 @@
 #! /bin/bash
+wlanInterface="$(ifconfig | egrep "wlp[0-9]" | awk '{print$1}' | sed 's/://g')"
 systemctl stop dhcpcd
-ip link set wlp2s0 down
+ip link set $wlanInterface down
 rfkill block all
 read -p "Pulse entrar para continuar_"
 sleep 5 
